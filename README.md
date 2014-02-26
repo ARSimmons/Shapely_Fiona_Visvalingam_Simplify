@@ -14,7 +14,7 @@
 	
 # <a name="project-summary"></a>Project Summary
 
-Fiona (1.0) and Shapely used to simplify polygons by an area threshold
+Fiona (1.1+) and Shapely used to simplify polygons by an area threshold
 
 
 
