@@ -5,7 +5,7 @@
 ## Arielle Simmons                           ##
 ## GIS Data Engineer                         ##
 ## Date created:  February 7, 2014           ##
-## Date modified: February 23, 2014          ##
+## Date modified: February 25, 2014          ##
 ###############################################
 
 ## This script is to created to simplify
@@ -27,7 +27,7 @@
 ## p1 = points[0]
 ## p2 = points[1]
 ## p3 = points[2]
-## abs(p1[0] * (p2[1] - p3[1]) + p2[0] * (p1[1] - p3[1]) + p3[0] * (p1[1] - p2[1])) / 2.0
+## abs(p1[0] * (p2[1] - p3[1]) + p2[0] * (p3[1] - p1[1]) + p3[0] * (p1[1] - p2[1])) / 2.0
 
 ## a.process_file(r'I:\It_19\Simplify_polygons\test_data\multipoly_data\area_code_2007_MULTIPOLY_1.shp', r'I:\It_19\Simplify_polygons\test_data\multipoly_data\area_code_2007_MULTIPOLY_test.shp',5000)
 # a = PolygonSimplify(); a.process_file(r'I:\It_19\Simplify_polygons\test_data\multipoly_data\polygon.shp', r'I:\It_19\Simplify_polygons\test_data\multipoly_data\poly_test.shp',5000)
@@ -37,7 +37,7 @@ from shapely.geometry import shape, mapping, Polygon, MultiPolygon
 import heapq
 import shapely
 from shapely.geometry.polygon import LinearRing
-import copy
+
 
 class RingTriangle:
     def __init__(self, point, index):
@@ -64,8 +64,8 @@ class RingTriangle:
         p1 = self.point
         p2 = self.prevTriangle.point
         p3 = self.nextTriangle.point
-        area = abs(p1[0] * (p2[1] - p3[1]) + p2[0] * (p1[1] - p3[1]) + p3[0] * (p1[1] - p2[1])) / 2.0
-        print area
+        area = abs(p1[0] * (p2[1] - p3[1]) + p2[0] * (p3[1] - p1[1]) + p3[0] * (p1[1] - p2[1])) / 2.0
+        #print area
         return area
 
 class PolygonSimplify:
@@ -102,6 +102,8 @@ class PolygonSimplify:
         # Simplify
         while len(triangleRing) > 2:
             # if the smallest triangle is greater than the threshold, we can stop
+            # i.e. loop to point where the heap head is >= threshold
+
             if triangleRing[0].calcArea() >= threshold:
                 break
             else:
@@ -128,16 +130,12 @@ class PolygonSimplify:
         for index in indexList:
             simpleRing.append(ring.coords[index])
 
-        # ...
-        simpleRing.append(simpleRing[0])
-
         # Convert list into LinearRing
         simpleRing = LinearRing(simpleRing)
 
         # print statements for debugging to check if points are being reduced...
-        print "Starting size: " + str(len(ring.coords))
-        print "Ending size: " + str(len(simpleRing.coords))
-
+        #print "Starting size: " + str(len(ring.coords))
+        #print "Ending size: " + str(len(simpleRing.coords))
         return simpleRing
 
 
@@ -171,8 +169,7 @@ class PolygonSimplify:
 
         simpleIntRings = []
         for ring in poly.interiors:
-        ## added 'ring' to the parentheses, then 'poly.interiors' --  original only had threshold
-            simpleRing = self.simplify_ring(poly.interiors, threshold)
+            simpleRing = self.simplify_ring(ring, threshold)
             if simpleRing is not None:
                 simpleIntRings.append(simpleRing)
         return shapely.geometry.Polygon(simpleExtRing, simpleIntRings)
