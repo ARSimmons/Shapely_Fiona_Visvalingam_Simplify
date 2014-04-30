@@ -23,8 +23,9 @@ Key points to note:
 
 	- As of 4/29/14 there are NO TOPOLOGY preserving rules in place (!!user beware!!)
 	- Polygons which are smaller then the area threshold CAN BE deleted 
-	- Lines preserve their beginning and end point, thus lines CANNOT BE DELETED. The beginning and end points of a line feature
-	  are static throughout the simplification process.
+	- Lines preserve their beginning and end point, thus lines CANNOT BE DELETED. 
+	  The beginning and end points of a line feature are static throughout the 
+	  simplification process.
 	- threshold units are determined by shapefile map units.  
 	- to run from command line: python simplify.py <input file> <output file> <threshold>
 
